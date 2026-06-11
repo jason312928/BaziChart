@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Test
+        run: ./script/test.sh
+
+      - name: Build app
+        run: ./script/build_and_run.sh build
+
+      - name: Create archive
+        id: package
+        run: |
+          ARCHIVE="BaziChart-macOS-$(uname -m).zip"
+          ditto -c -k --sequesterRsrc --keepParent "dist/八字排盘.app" "$ARCHIVE"
+          echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.package.outputs.archive }}
+          generate_release_notes: true
