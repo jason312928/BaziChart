@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Show Swift version
         run: swift --version
@@ -33,7 +33,7 @@ jobs:
         run: ./script/build_and_run.sh build
 
       - name: Upload app bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: BaziChart-macOS
           path: dist/八字排盘.app
